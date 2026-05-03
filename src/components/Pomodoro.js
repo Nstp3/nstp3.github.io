@@ -1,5 +1,10 @@
 import { t } from '../i18n/translations.js';
-import { notifyPomodoroWorkDone, notifyPomodoroBreakDone, notificationsGranted } from '../notifications.js';
+import {
+  notifyPomodoroWorkDone,
+  notifyPomodoroBreakDone,
+  scheduleAndroidPomodoroAlarm,
+  cancelAndroidPomodoroAlarm,
+} from '../notifications.js';
 import { state } from '../state.js';
 
 let timer = null;
@@ -30,18 +35,24 @@ function tick() {
   if (secondsLeft <= 0) {
     playBeep();
 
-    // ── Уведомление при завершении сессии ─────────────────
     const lang = state?.lang || 'ru';
+
+    // Web уведомление (работает когда вкладка открыта)
     if (isBreak) {
-      // Перерыв закончился — пора работать
       notifyPomodoroBreakDone(lang);
     } else {
-      // Рабочая сессия закончилась — пора отдыхать
       notifyPomodoroWorkDone(lang);
     }
 
+    // Переходим к следующей фазе
     isBreak = !isBreak;
     secondsLeft = (isBreak ? breakMinutes : workMinutes) * 60;
+
+    // Запланировать следующий нативный будильник для Android
+    // (на случай если пользователь свернёт приложение во время следующей сессии)
+    const endTimeMs = Date.now() + secondsLeft * 1000;
+    scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang);
+
     updatePomodoroDisplay();
     return;
   }
@@ -65,19 +76,20 @@ function updatePomodoroDisplay() {
     ? 'linear-gradient(90deg,#0277bd,#42a5f5)'
     : 'linear-gradient(90deg,var(--green2),var(--green))';
 
-  // Обновляем подсказку уведомлений
   if (notifEl) {
     if (!('Notification' in window)) {
       notifEl.textContent = '';
     } else if (Notification.permission === 'granted') {
       notifEl.textContent = t('notif_on');
-      notifEl.style.color = 'var(--green)';
+      notifEl.style.color  = 'var(--green)';
+      notifEl.style.cursor = 'default';
     } else if (Notification.permission === 'denied') {
       notifEl.textContent = t('notif_blocked');
-      notifEl.style.color = 'var(--red)';
+      notifEl.style.color  = 'var(--red)';
+      notifEl.style.cursor = 'default';
     } else {
       notifEl.textContent = t('notif_ask');
-      notifEl.style.color = 'var(--text2)';
+      notifEl.style.color  = 'var(--text2)';
       notifEl.style.cursor = 'pointer';
     }
   }
@@ -85,19 +97,33 @@ function updatePomodoroDisplay() {
 
 function startStop() {
   if (isRunning) {
-    clearInterval(timer); isRunning = false;
+    clearInterval(timer);
+    isRunning = false;
     document.getElementById('pomBtn').textContent = t('start');
+    // Отменить нативный будильник — пользователь поставил на паузу
+    cancelAndroidPomodoroAlarm();
   } else {
     if (secondsLeft === 0) secondsLeft = workMinutes * 60;
-    timer = setInterval(tick, 1000); isRunning = true;
+    timer = setInterval(tick, 1000);
+    isRunning = true;
     document.getElementById('pomBtn').textContent = t('pause');
+
+    // Запланировать нативный будильник для Android
+    // (сработает даже если приложение закроют)
+    const endTimeMs = Date.now() + secondsLeft * 1000;
+    const lang = state?.lang || 'ru';
+    scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang);
   }
 }
 
 function reset() {
-  clearInterval(timer); isRunning = false; isBreak = false;
+  clearInterval(timer);
+  isRunning = false;
+  isBreak   = false;
   secondsLeft = workMinutes * 60;
   document.getElementById('pomBtn').textContent = t('start');
+  // Отменить нативный будильник
+  cancelAndroidPomodoroAlarm();
   updatePomodoroDisplay();
 }
 
@@ -140,14 +166,13 @@ export function renderPomodoro() {
 }
 
 export function bindPomodoro() {
-  window.pomStartStop = startStop;
-  window.pomReset     = reset;
-  window.pomApply     = applySettings;
+  window.pomStartStop    = startStop;
+  window.pomReset        = reset;
+  window.pomApply        = applySettings;
   window.pomRequestNotif = async () => {
     if (!('Notification' in window)) return;
     await Notification.requestPermission();
     updatePomodoroDisplay();
   };
-  // Обновить статус уведомлений сразу после рендера
   setTimeout(updatePomodoroDisplay, 0);
 }

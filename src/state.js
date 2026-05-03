@@ -3,6 +3,7 @@
 // ============================================================
 
 import { dbGet, dbSet } from './db.js';
+import { syncStatsToAndroid } from './notifications.js';
 
 const STORAGE_KEY = 'life_rpg_v2';   // старый ключ localStorage (для миграции)
 
@@ -110,6 +111,8 @@ export async function initState() {
 // ── Сохранение ────────────────────────────────────────────
 export function saveState() {
   dbSet(state).catch(e => console.warn('IndexedDB save failed:', e));
+  // Синхронизируем статистику с Android для WorkManager
+  syncStatsToAndroid(state);
 }
 
 // ── Экспорт / Импорт ──────────────────────────────────────

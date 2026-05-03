@@ -1,17 +1,21 @@
 // ============================================================
-// notifications.js — Web Notifications API (Этап 1)
-// Работает: веб-браузер (другая вкладка) + Android APK (открытое приложение)
+// notifications.js — Web Notifications API + Android Bridge
+// Этап 1: уведомления когда вкладка открыта (веб + APK)
+// Этап 2: вызовы AndroidNative для нативных уведомлений (APK закрыт)
 // ============================================================
 
 const ICON = '/favicon.ico';
+
+// Проверяем запущены ли мы внутри Android WebView
+function isAndroid() {
+  return typeof window.AndroidNative !== 'undefined';
+}
 
 // ── Запросить разрешение ──────────────────────────────────
 export async function requestNotificationPermission() {
   if (!('Notification' in window)) return false;
   if (Notification.permission === 'granted') return true;
   if (Notification.permission === 'denied') return false;
-
-  // Запрашиваем только по жесту пользователя — иначе браузер блокирует
   const permission = await Notification.requestPermission();
   return permission === 'granted';
 }
@@ -20,7 +24,7 @@ export function notificationsGranted() {
   return 'Notification' in window && Notification.permission === 'granted';
 }
 
-// ── Показать уведомление ──────────────────────────────────
+// ── Показать Web уведомление ──────────────────────────────
 export function showNotification(title, body, options = {}) {
   if (!notificationsGranted()) return;
   try {
@@ -33,16 +37,52 @@ export function showNotification(title, body, options = {}) {
       renotify: options.renotify ?? true,
       ...options,
     });
-    // Клик по уведомлению — фокус на вкладку
     n.onclick = () => { window.focus(); n.close(); };
-    // Автозакрытие через 8 секунд
     setTimeout(() => n.close(), 8000);
   } catch (e) {
     console.warn('Notification failed:', e);
   }
 }
 
-// ── Помодоро: конец рабочей сессии ───────────────────────
+// ── Помодоро: запланировать нативный будильник ────────────
+// Вызывается из Pomodoro.js когда таймер стартует
+export function scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang) {
+  if (!isAndroid()) return;
+  try {
+    window.AndroidNative.schedulePomodoroAlarm(endTimeMs, isBreak, lang);
+  } catch (e) {
+    console.warn('Android alarm schedule failed:', e);
+  }
+}
+
+// Вызывается когда таймер останавливается или сбрасывается
+export function cancelAndroidPomodoroAlarm() {
+  if (!isAndroid()) return;
+  try {
+    window.AndroidNative.cancelPomodoroAlarm();
+  } catch (e) {
+    console.warn('Android alarm cancel failed:', e);
+  }
+}
+
+// ── Синхронизация статистики для WorkManager ──────────────
+// Вызывается из state.js при каждом saveState
+export function syncStatsToAndroid(state) {
+  if (!isAndroid()) return;
+  try {
+    const today        = new Date().getDate();
+    const pendingTasks  = (state.tasks  || []).filter(t => !t.done).length;
+    const pendingHabits = (state.habits || []).filter(h => {
+      return !(h.done || []).includes(today);
+    }).length;
+    const lang = state.lang || 'ru';
+    window.AndroidNative.updateStats(pendingTasks, pendingHabits, lang);
+  } catch (e) {
+    console.warn('Android stats sync failed:', e);
+  }
+}
+
+// ── Помодоро: конец рабочей сессии (Web уведомление) ─────
 export function notifyPomodoroWorkDone(lang = 'ru') {
   const title = lang === 'ru' ? '⏱ Сессия завершена!' : '⏱ Session complete!';
   const body  = lang === 'ru'
@@ -51,7 +91,7 @@ export function notifyPomodoroWorkDone(lang = 'ru') {
   showNotification(title, body, { tag: 'pomodoro-work' });
 }
 
-// ── Помодоро: конец перерыва ──────────────────────────────
+// ── Помодоро: конец перерыва (Web уведомление) ────────────
 export function notifyPomodoroBreakDone(lang = 'ru') {
   const title = lang === 'ru' ? '⚡ Перерыв закончен!' : '⚡ Break is over!';
   const body  = lang === 'ru'
@@ -60,27 +100,20 @@ export function notifyPomodoroBreakDone(lang = 'ru') {
   showNotification(title, body, { tag: 'pomodoro-break' });
 }
 
-// ── Ежедневные напоминания ────────────────────────────────
-// Планируем проверку на вечер (20:00).
-// Если вкладка открыта — сработает в нужное время.
-
+// ── Ежедневные напоминания (Web) ──────────────────────────
 let _dailyTimer = null;
 
 export function scheduleDailyReminder(state) {
   if (_dailyTimer) clearTimeout(_dailyTimer);
 
-  const now   = new Date();
+  const now    = new Date();
   const remind = new Date();
-  remind.setHours(20, 0, 0, 0);   // 20:00
-
-  // Если 20:00 уже прошло сегодня — ставим на завтра
+  remind.setHours(20, 0, 0, 0);
   if (remind <= now) remind.setDate(remind.getDate() + 1);
 
   const ms = remind.getTime() - now.getTime();
-
   _dailyTimer = setTimeout(() => {
     fireDailyReminder(state);
-    // Перепланируем на следующий день
     scheduleDailyReminder(state);
   }, ms);
 
@@ -90,35 +123,31 @@ export function scheduleDailyReminder(state) {
 function fireDailyReminder(state) {
   if (!notificationsGranted()) return;
 
-  const lang        = state.lang || 'ru';
-  const today       = new Date().getDate();
-  const pendingTasks = (state.tasks || []).filter(t => !t.done).length;
+  const lang         = state.lang || 'ru';
+  const today        = new Date().getDate();
+  const pendingTasks  = (state.tasks  || []).filter(t => !t.done).length;
   const pendingHabits = (state.habits || []).filter(h => {
-    const done = (h.done || []).includes(today);
-    return !done;
+    return !(h.done || []).includes(today);
   }).length;
 
-  // Уведомление о задачах
   if (pendingTasks > 0) {
     const title = lang === 'ru' ? '📋 Незавершённые задачи' : '📋 Pending tasks';
     const body  = lang === 'ru'
-      ? `У тебя ${pendingTasks} невыполненн${pendingTasks === 1 ? 'ая задача' : 'ых задач'} на сегодня`
-      : `You have ${pendingTasks} task${pendingTasks === 1 ? '' : 's'} left for today`;
+      ? `У тебя ${pendingTasks} невыполненных задач на сегодня`
+      : `You have ${pendingTasks} task${pendingTasks === 1 ? '' : 's'} left today`;
     showNotification(title, body, { tag: 'daily-tasks' });
   }
 
-  // Уведомление о привычках (через 3 сек чтобы не перекрывали)
   if (pendingHabits > 0) {
     setTimeout(() => {
       const title = lang === 'ru' ? '🔥 Не забудь про привычки!' : '🔥 Don\'t forget your habits!';
       const body  = lang === 'ru'
-        ? `${pendingHabits} привычк${pendingHabits === 1 ? 'а' : 'и'} ещё не отмечен${pendingHabits === 1 ? 'а' : 'ы'} сегодня`
+        ? `${pendingHabits} привычек ещё не отмечено сегодня`
         : `${pendingHabits} habit${pendingHabits === 1 ? '' : 's'} not checked today`;
       showNotification(title, body, { tag: 'daily-habits' });
     }, 3000);
   }
 
-  // Если всё сделано — похвалить
   if (pendingTasks === 0 && pendingHabits === 0) {
     const title = lang === 'ru' ? '🏆 Всё выполнено!' : '🏆 All done!';
     const body  = lang === 'ru'
