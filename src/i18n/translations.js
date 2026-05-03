@@ -36,6 +36,11 @@ export const translations = {
     // Movies
     movies: 'Фильмы', movie_title_placeholder: 'Название фильма...', movie_poster_placeholder: 'Ссылка на постер...',
     movie_add: 'Добавить', movies_empty: 'Нет фильмов. Добавь первый!',
+    // Games
+    games: 'Игры', game_title_placeholder: 'Название игры...', game_cover_placeholder: 'Ссылка на обложку...',
+    game_url_placeholder: 'Ссылка на игру (торрент, магазин)...', game_add: 'Добавить',
+    games_empty: 'Нет игр. Добавь первую!', game_cover_upload: 'Загрузить обложку',
+    games_filter_all: 'Все', games_filter_planned: 'Планирую', games_filter_completed: 'Пройдено',
     status_planned: 'Планирую', status_unwatched: 'Не смотрел', status_favorite: 'Любимые',
     filter_planned: 'Планирую', filter_unwatched: 'Не смотрел', filter_favorite: 'Любимые',
     // Music
@@ -91,6 +96,11 @@ export const translations = {
     // Movies
     movies: 'Movies', movie_title_placeholder: 'Movie title...', movie_poster_placeholder: 'Poster URL...',
     movie_add: 'Add', movies_empty: 'No movies. Add your first!',
+    // Games
+    games: 'Games', game_title_placeholder: 'Game title...', game_cover_placeholder: 'Cover image URL...',
+    game_url_placeholder: 'Game link (torrent, store)...', game_add: 'Add',
+    games_empty: 'No games. Add your first!', game_cover_upload: 'Upload cover',
+    games_filter_all: 'All', games_filter_planned: 'Planning', games_filter_completed: 'Completed',
     status_planned: 'Planning', status_unwatched: 'Unwatched', status_favorite: 'Favorites',
     filter_planned: 'Planning', filter_unwatched: 'Unwatched', filter_favorite: 'Favorites',
     // Music

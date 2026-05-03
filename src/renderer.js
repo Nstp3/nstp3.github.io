@@ -10,6 +10,7 @@ import { renderActivityCard, renderLineChart }  from './components/ActivityChart
 import { renderPomodoro, bindPomodoro }         from './components/Pomodoro.js';
 import { renderHabits, bindHabits }             from './components/Habits.js';
 import { renderMovies, bindMovies }             from './components/Movies.js';
+import { renderGames, bindGames }               from './components/Games.js';
 import { renderLocalPlayer, bindLocalPlayer, renderSoundCloudPlayer, bindSoundCloudPlayer } from './components/Music.js';
 import { renderTaskHistory, bindTaskHistory }   from './components/TaskHistory.js';
 import { renderCalendar, bindCalendar }         from './components/Calendar.js';
@@ -117,9 +118,10 @@ function renderMobile(app) {
           <div style="display:flex;flex-direction:column;gap:10px;">
             ${renderLocalPlayer()}
             ${renderMovies()}
+            ${renderGames()}
           </div>
         </div>`;
-      bindPomodoro(); bindLocalPlayer(); bindMovies();
+      bindPomodoro(); bindLocalPlayer(); bindMovies(); bindGames();
       break;
   }
 }
@@ -164,8 +166,9 @@ function renderDesktop(app) {
           ${renderSoundCloudPlayer()}
         </div>
         ${renderMovies()}
+        ${renderGames()}
       </div>`;
-    bindLocalPlayer(); bindSoundCloudPlayer(); bindMovies();
+    bindLocalPlayer(); bindSoundCloudPlayer(); bindMovies(); bindGames();
   }
 }
 

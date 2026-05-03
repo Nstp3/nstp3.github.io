@@ -3,9 +3,8 @@
 // ============================================================
 
 import { dbGet, dbSet } from './db.js';
-import { syncStatsToAndroid } from './notifications.js';
 
-const STORAGE_KEY = 'life_rpg_v2';   //старый ключ localStorage (для миграции)
+const STORAGE_KEY = 'life_rpg_v2';   // старый ключ localStorage (для миграции)
 
 export const defaultState = {
   profile: {
@@ -34,6 +33,7 @@ export const defaultState = {
   habits:       [],
   movies:       [],
   scEmbeds:     [],
+  games:        [],
   scActive:     null,
   dailyXP:      0,
   dailyXPLimit: 1000,
@@ -55,6 +55,7 @@ function mergeState(saved) {
     logs:        Array.isArray(saved.logs)        ? saved.logs        : [],
     habits:      Array.isArray(saved.habits)      ? saved.habits      : [],
     movies:      Array.isArray(saved.movies)      ? saved.movies      : [],
+    games:       Array.isArray(saved.games)       ? saved.games       : [],
     scEmbeds:    Array.isArray(saved.scEmbeds)    ? saved.scEmbeds    : [],
     scActive:    saved.scActive ?? null,
     lang:        saved.lang    || 'ru',
@@ -65,7 +66,7 @@ function mergeState(saved) {
 // Переменная стейта — заполняется в initState()
 export let state = structuredClone(defaultState);
 
-// ── Миграция localStorage → IndexedDB ────────────────────
+// ── Миграция localStorage → IndexedDB ─────────────────────
 function migrateFromLocalStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -111,8 +112,6 @@ export async function initState() {
 // ── Сохранение ────────────────────────────────────────────
 export function saveState() {
   dbSet(state).catch(e => console.warn('IndexedDB save failed:', e));
-  // Синхронизируем статистику с Android для WorkManager
-  syncStatsToAndroid(state);
 }
 
 // ── Экспорт / Импорт ──────────────────────────────────────
