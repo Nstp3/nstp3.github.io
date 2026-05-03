@@ -52,12 +52,14 @@ export function renderLineChart() {
         label: t('tasks_done_label'),
         data: logs.map(l => l.value),
         borderColor: lineColor,
-        backgroundColor: fillColor,
-        fill: true,
+        backgroundColor: 'transparent',
+        fill: false,
         tension: 0.4,
-        pointRadius: 2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
         pointBackgroundColor: lineColor,
-        borderWidth: 1.5,
+        pointBorderColor: lineColor,
+        borderWidth: 2,
       }]
     },
     options: {
