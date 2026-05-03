@@ -27,6 +27,10 @@ export const translations = {
     pomodoro: 'Помодоро', work: 'РАБОТА', rest_label: 'ПЕРЕРЫВ',
     start: '▶ Старт', pause: '⏸ Пауза', reset: '↺ Сброс',
     work_min: 'Работа (мин)', break_min: 'Перерыв (мин)', apply: 'Применить',
+    // Notifications
+    notif_on: '🔔 Уведомления включены',
+    notif_blocked: '🔕 Уведомления заблокированы',
+    notif_ask: '🔔 Нажми чтобы включить уведомления',
     // Activity
     activity: 'Активность', tasks_done_label: 'Выполнено задач',
     // Movies
@@ -78,6 +82,10 @@ export const translations = {
     pomodoro: 'Pomodoro', work: 'WORK', rest_label: 'BREAK',
     start: '▶ Start', pause: '⏸ Pause', reset: '↺ Reset',
     work_min: 'Work (min)', break_min: 'Break (min)', apply: 'Apply',
+    // Notifications
+    notif_on: '🔔 Notifications enabled',
+    notif_blocked: '🔕 Notifications blocked',
+    notif_ask: '🔔 Tap to enable notifications',
     // Activity
     activity: 'Activity', tasks_done_label: 'Tasks done',
     // Movies

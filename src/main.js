@@ -4,6 +4,7 @@ import { render } from './renderer.js';
 import { setI18nState } from './i18n/translations.js';
 import { THEMES } from './themes.js';
 import { ICONS } from './icons.js';
+import { requestNotificationPermission, scheduleDailyReminder } from './notifications.js';
 
 const THEME_ICON_MAP = {
   dark:   'ic-theme-dark',
@@ -19,6 +20,15 @@ async function boot() {
   render();
   initThemeDropdown();
   updateDropdownIcons();
+
+  // Запрашиваем разрешение на уведомления (только если ещё не решено)
+  if ('Notification' in window && Notification.permission === 'default') {
+    // Небольшая задержка чтобы не пугать пользователя сразу при открытии
+    setTimeout(() => requestNotificationPermission(), 3000);
+  }
+
+  // Планируем ежедневное напоминание на 20:00
+  scheduleDailyReminder(state);
 }
 
 boot();

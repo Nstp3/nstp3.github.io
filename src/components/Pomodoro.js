@@ -1,4 +1,6 @@
 import { t } from '../i18n/translations.js';
+import { notifyPomodoroWorkDone, notifyPomodoroBreakDone, notificationsGranted } from '../notifications.js';
+import { state } from '../state.js';
 
 let timer = null;
 let secondsLeft = 0;
@@ -26,18 +28,34 @@ function formatTime(seconds) {
 
 function tick() {
   if (secondsLeft <= 0) {
-    playBeep(); isBreak = !isBreak;
+    playBeep();
+
+    // ── Уведомление при завершении сессии ─────────────────
+    const lang = state?.lang || 'ru';
+    if (isBreak) {
+      // Перерыв закончился — пора работать
+      notifyPomodoroBreakDone(lang);
+    } else {
+      // Рабочая сессия закончилась — пора отдыхать
+      notifyPomodoroWorkDone(lang);
+    }
+
+    isBreak = !isBreak;
     secondsLeft = (isBreak ? breakMinutes : workMinutes) * 60;
-    updatePomodoroDisplay(); return;
+    updatePomodoroDisplay();
+    return;
   }
-  secondsLeft--; updatePomodoroDisplay();
+  secondsLeft--;
+  updatePomodoroDisplay();
 }
 
 function updatePomodoroDisplay() {
   const timeEl     = document.getElementById('pomTime');
   const labelEl    = document.getElementById('pomLabel');
   const progressEl = document.getElementById('pomProgress');
+  const notifEl    = document.getElementById('pomNotifHint');
   if (!timeEl) return;
+
   const total = (isBreak ? breakMinutes : workMinutes) * 60;
   const pct   = ((total - secondsLeft) / total) * 100;
   timeEl.textContent  = formatTime(secondsLeft);
@@ -46,6 +64,23 @@ function updatePomodoroDisplay() {
   progressEl.style.background = isBreak
     ? 'linear-gradient(90deg,#0277bd,#42a5f5)'
     : 'linear-gradient(90deg,var(--green2),var(--green))';
+
+  // Обновляем подсказку уведомлений
+  if (notifEl) {
+    if (!('Notification' in window)) {
+      notifEl.textContent = '';
+    } else if (Notification.permission === 'granted') {
+      notifEl.textContent = t('notif_on');
+      notifEl.style.color = 'var(--green)';
+    } else if (Notification.permission === 'denied') {
+      notifEl.textContent = t('notif_blocked');
+      notifEl.style.color = 'var(--red)';
+    } else {
+      notifEl.textContent = t('notif_ask');
+      notifEl.style.color = 'var(--text2)';
+      notifEl.style.cursor = 'pointer';
+    }
+  }
 }
 
 function startStop() {
@@ -98,6 +133,8 @@ export function renderPomodoro() {
         </div>
         <button class="btn-pom btn-pom--ghost" style="width:100%;margin-top:6px;" onclick="pomApply()">${t('apply')}</button>
       </div>
+      <div id="pomNotifHint" onclick="pomRequestNotif()"
+           style="margin-top:10px;font-size:10px;font-family:var(--font-mono);text-align:center;min-height:14px;"></div>
     </div>
   `;
 }
@@ -106,4 +143,11 @@ export function bindPomodoro() {
   window.pomStartStop = startStop;
   window.pomReset     = reset;
   window.pomApply     = applySettings;
+  window.pomRequestNotif = async () => {
+    if (!('Notification' in window)) return;
+    await Notification.requestPermission();
+    updatePomodoroDisplay();
+  };
+  // Обновить статус уведомлений сразу после рендера
+  setTimeout(updatePomodoroDisplay, 0);
 }
