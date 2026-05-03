@@ -106,22 +106,22 @@ function renderMobile(app) {
     case 'habits':
       app.innerHTML = `
         <div class="col">
+          ${renderPomodoro()}
           ${renderHabits()}
         </div>`;
-      bindHabits();
+      bindPomodoro(); bindHabits();
       break;
 
-    case 'pomodoro':
+    case 'leisure':
       app.innerHTML = `
         <div class="col">
-          ${renderPomodoro()}
           <div style="display:flex;flex-direction:column;gap:10px;">
             ${renderLocalPlayer()}
             ${renderMovies()}
             ${renderGames()}
           </div>
         </div>`;
-      bindPomodoro(); bindLocalPlayer(); bindMovies(); bindGames();
+      bindLocalPlayer(); bindMovies(); bindGames();
       break;
   }
 }
