@@ -5,7 +5,7 @@
 import { dbGet, dbSet } from './db.js';
 import { syncStatsToAndroid } from './notifications.js';
 
-const STORAGE_KEY = 'life_rpg_v2';   // старый ключ localStorage (для миграции)
+const STORAGE_KEY = 'life_rpg_v2';   //старый ключ localStorage (для миграции)
 
 export const defaultState = {
   profile: {
@@ -65,7 +65,7 @@ function mergeState(saved) {
 // Переменная стейта — заполняется в initState()
 export let state = structuredClone(defaultState);
 
-// ── Миграция localStorage → IndexedDB ─────────────────────
+// ── Миграция localStorage → IndexedDB ────────────────────
 function migrateFromLocalStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);

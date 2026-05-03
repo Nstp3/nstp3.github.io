@@ -109,7 +109,7 @@ function startStop() {
     document.getElementById('pomBtn').textContent = t('pause');
 
     // Запланировать нативный будильник для Android
-    // (сработает даже если приложение закроют)
+    // (сработает даже если приложение закроют.)
     const endTimeMs = Date.now() + secondsLeft * 1000;
     const lang = state?.lang || 'ru';
     scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang);

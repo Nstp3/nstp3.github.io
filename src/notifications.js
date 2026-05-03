@@ -44,7 +44,7 @@ export function showNotification(title, body, options = {}) {
   }
 }
 
-// ── Помодоро: запланировать нативный будильник ────────────
+// ── Помодоро: запланировать нативный будильник ───────────
 // Вызывается из Pomodoro.js когда таймер стартует
 export function scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang) {
   if (!isAndroid()) return;
