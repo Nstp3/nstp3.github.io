@@ -37,6 +37,24 @@ A personal RPG-style productivity dashboard. Turn your daily tasks, habits and s
 - **Export / Import** — JSON backup of all your progress
 - **Bilingual** — RU / EN
 - **Notifications** — pomodoro alerts + daily task & habit reminders (web + Android)
+- **Movies** — personal watchlist with poster, status filters and favorites
+- **Games** — personal game library with cover art, source link, completion tracker and trophy progression
+
+---
+
+## 🎮 Games — Trophy System
+
+Track your gaming progress with a visual trophy progression:
+
+| Completed | Trophy | Progress |
+|---|---|---|
+| 0–9 | — | `🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ X/10` |
+| 10+ | 🥉 Bronze | `🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ X/50` |
+| 50+ | 🥈 Silver | progress toward 100 |
+| 100+ | 🥇 Gold | progress toward 250 |
+| 250+ | 💎 Platinum | progress toward 500 |
+| 500+ | 💜 Purple | progress toward 1000 |
+| 1000+ | 👑 Legendary | MAX |
 
 ---
 
@@ -62,19 +80,17 @@ A native Android WebView wrapper. Works **offline** — all files are bundled in
 
 ## 📱 Add to Home Screen (without APK)
 
-The site is already live — just open the link and add it to your home screen.
-
 ### Android — Brave / Chrome
 
 1. Open [nstp3.github.io](https://nstp3.github.io/) in **Brave** or **Chrome**
-2. Tap **⋮** (three dots) → **"Add to Home Screen"** or **"Install app"**
-3. Confirm — the icon appears on your home screen
+2. Tap **⋮** → **"Add to Home Screen"** or **"Install app"**
+3. Confirm — icon appears on home screen
 
 ### iPhone — Safari
 
 1. Open [nstp3.github.io](https://nstp3.github.io/) in **Safari**
-2. Tap the **Share** button → **"Add to Home Screen"**
-3. Confirm — the icon appears on your home screen
+2. Tap **Share** → **"Add to Home Screen"**
+3. Confirm — icon appears on home screen
 
 ---
 
@@ -82,12 +98,12 @@ The site is already live — just open the link and add it to your home screen.
 
 ### Web (browser)
 - On first load the browser asks for notification permission
-- Click **"🔔 Tap to enable notifications"** under the Pomodoro block
-- **Pomodoro**: alert when work session or break ends (works even on another tab)
-- **Daily at 20:00**: reminder about unfinished tasks and unchecked habits (while the tab is open)
+- Tap **"🔔 Tap to enable notifications"** under the Pomodoro block to enable
+- **Pomodoro**: alert when work session or break ends — works even on another tab
+- **Daily at 20:00**: reminder about unfinished tasks and unchecked habits (while tab is open)
 
 ### Android APK
-- System permission dialog appears on first launch
+- System permission dialog appears on first launch — tap Allow
 - **Pomodoro**: native alarm via `AlarmManager` — fires even when the app is fully closed
 - **Daily at 20:00**: background job via `WorkManager` — fires even when the app is fully closed
 
@@ -106,7 +122,7 @@ All data is stored **locally on your device** in IndexedDB (~500 MB limit). Noth
 
 ## 🎨 Themes
 
-Switch via the icon button in the top-right corner (dropdown).
+Switch via the icon button in the top-right corner.
 
 | | Theme | Style |
 |---|------|-------|
@@ -129,12 +145,12 @@ npm run dev        # → http://localhost:5173
 
 ### Build for GitHub Pages
 ```bash
-npm run build      # output: dist/
+npm run build
 ```
 
 ### Build for Android APK
 ```bash
-BUILD_TARGET=android npm run build   # output: dist-android/
+BUILD_TARGET=android npm run build
 ```
 
 ### One-command rebuild & copy to Android Studio
@@ -151,7 +167,6 @@ Then in Android Studio: **Build → Generate Signed APK → release → Finish**
 ### Test on mobile (same Wi-Fi)
 ```bash
 npm run dev -- --host
-# Use the Network address shown in terminal
 ```
 
 ---
@@ -161,28 +176,34 @@ npm run dev -- --host
 ```
 nstp3-rpg/
 ├── android_version/
-│   └── app-release.apk          # Android APK (offline)
-├── readme_assets/               # Theme icons for README
+│   └── app-release.apk
+├── readme_assets/
+├── PRIVACY.md
 ├── index.html
 ├── package.json
 ├── vite.config.js
-├── PRIVACY.md                   # Privacy Policy
-├── assets/                      # Background images & icons
+├── assets/
 └── src/
-    ├── main.js                  # Init, themes, events
-    ├── renderer.js              # Render engine (desktop + mobile)
-    ├── state.js                 # App state
-    ├── db.js                    # IndexedDB wrapper
-    ├── notifications.js         # Web Notifications + Android bridge
-    ├── themes.js                # Theme config
-    ├── icons.js                 # Icons as base64
-    ├── xp.js                    # XP & level logic
-    ├── components/              # UI components
-    │   ├── Pomodoro.js          # Timer + notification triggers
+    ├── main.js
+    ├── renderer.js
+    ├── state.js
+    ├── db.js
+    ├── notifications.js
+    ├── themes.js
+    ├── icons.js
+    ├── xp.js
+    ├── components/
+    │   ├── Movies.js
+    │   ├── Games.js
+    │   ├── Pomodoro.js
+    │   ├── Habits.js
+    │   ├── Tasks.js
+    │   ├── Skills.js
+    │   ├── Stats.js
     │   └── ...
-    ├── styles/                  # CSS (base, components, layout)
-    ├── ui/                      # Utilities (toast, progressBar…)
-    └── i18n/                    # RU / EN translations
+    ├── styles/
+    ├── ui/
+    └── i18n/
 ```
 
 ---
