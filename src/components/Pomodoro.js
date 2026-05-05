@@ -7,17 +7,35 @@ import {
 } from '../notifications.js';
 import { state } from '../state.js';
 
-let timer = null;
-let secondsLeft = 0;
-let isBreak = false;
-let isRunning = false;
-let workMinutes = 25;
+let timer        = null;
+let isBreak      = false;
+let isRunning    = false;
+let workMinutes  = 25;
 let breakMinutes = 5;
+
+// ── Фикс бага 1: храним не «сколько секунд осталось»,
+//    а «когда должен закончиться таймер» ──────────────────
+let endTime      = 0;   // Date.now() + оставшееся время в мс
+let pausedLeft   = 0;   // сколько мс оставалось в момент паузы
+
+function totalMs() {
+  return (isBreak ? breakMinutes : workMinutes) * 60 * 1000;
+}
+
+function msLeft() {
+  if (!isRunning) return pausedLeft;
+  return Math.max(0, endTime - Date.now());
+}
+
+function formatTime(ms) {
+  const s = Math.ceil(ms / 1000);
+  return `${String(Math.floor(s / 60)).padStart(2,'0')}:${String(s % 60).padStart(2,'0')}`;
+}
 
 function playBeep() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
     osc.type = 'sine'; osc.frequency.value = 880;
@@ -27,36 +45,32 @@ function playBeep() {
   } catch(e) {}
 }
 
-function formatTime(seconds) {
-  return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
-}
-
 function tick() {
-  if (secondsLeft <= 0) {
+  const left = msLeft();
+
+  if (left <= 0) {
+    // Сессия закончилась
+    clearInterval(timer); timer = null;
     playBeep();
 
     const lang = state?.lang || 'ru';
-
-    // Web уведомление (работает когда вкладка открыта)
-    if (isBreak) {
-      notifyPomodoroBreakDone(lang);
-    } else {
-      notifyPomodoroWorkDone(lang);
-    }
+    if (isBreak) notifyPomodoroBreakDone(lang);
+    else         notifyPomodoroWorkDone(lang);
 
     // Переходим к следующей фазе
-    isBreak = !isBreak;
-    secondsLeft = (isBreak ? breakMinutes : workMinutes) * 60;
+    isBreak    = !isBreak;
+    pausedLeft = totalMs();
+    endTime    = Date.now() + pausedLeft;
 
-    // Запланировать следующий нативный будильник для Android
-    // (на случай если пользователь свернёт приложение во время следующей сессии)
-    const endTimeMs = Date.now() + secondsLeft * 1000;
-    scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang);
+    // Запланировать следующий Android-будильник
+    scheduleAndroidPomodoroAlarm(endTime, isBreak, lang);
 
+    // Автоматически стартуем следующую сессию
+    timer = setInterval(tick, 250);
     updatePomodoroDisplay();
     return;
   }
-  secondsLeft--;
+
   updatePomodoroDisplay();
 }
 
@@ -65,16 +79,24 @@ function updatePomodoroDisplay() {
   const labelEl    = document.getElementById('pomLabel');
   const progressEl = document.getElementById('pomProgress');
   const notifEl    = document.getElementById('pomNotifHint');
+  const btnEl      = document.getElementById('pomBtn');
   if (!timeEl) return;
 
-  const total = (isBreak ? breakMinutes : workMinutes) * 60;
-  const pct   = ((total - secondsLeft) / total) * 100;
-  timeEl.textContent  = formatTime(secondsLeft);
+  const left  = msLeft();
+  const total = totalMs();
+  const pct   = ((total - left) / total) * 100;
+
+  timeEl.textContent  = formatTime(left);
   labelEl.textContent = isBreak ? t('rest_label') : t('work');
   progressEl.style.width = `${pct}%`;
   progressEl.style.background = isBreak
     ? 'linear-gradient(90deg,#0277bd,#42a5f5)'
     : 'linear-gradient(90deg,var(--green2),var(--green))';
+
+  // Фикс бага 2: кнопка всегда соответствует реальному состоянию
+  if (btnEl) {
+    btnEl.textContent = isRunning ? t('pause') : t('start');
+  }
 
   if (notifEl) {
     if (!('Notification' in window)) {
@@ -97,36 +119,34 @@ function updatePomodoroDisplay() {
 
 function startStop() {
   if (isRunning) {
-    clearInterval(timer);
-    isRunning = false;
-    document.getElementById('pomBtn').textContent = t('start');
-    // Отменить нативный будильник — пользователь поставил на паузу
+    // Сохраняем остаток ДО смены isRunning — иначе msLeft() вернёт 0
+    const remaining = Math.max(0, endTime - Date.now());
+    clearInterval(timer); timer = null;
+    isRunning  = false;
+    pausedLeft = remaining;
     cancelAndroidPomodoroAlarm();
   } else {
-    if (secondsLeft === 0) secondsLeft = workMinutes * 60;
-    timer = setInterval(tick, 1000);
+    // Старт / продолжить
+    if (pausedLeft === 0) pausedLeft = totalMs();
+    endTime   = Date.now() + pausedLeft;
     isRunning = true;
-    document.getElementById('pomBtn').textContent = t('pause');
+    timer     = setInterval(tick, 250); // 250мс вместо 1000 — точнее
 
-    // Запланировать нативный будильник для Android
-    // (сработает даже если приложение закроют.)
-    const endTimeMs = Date.now() + secondsLeft * 1000;
     const lang = state?.lang || 'ru';
-    scheduleAndroidPomodoroAlarm(endTimeMs, isBreak, lang);
+    scheduleAndroidPomodoroAlarm(endTime, isBreak, lang);
   }
-}
-
-function reset() {
-  clearInterval(timer);
-  isRunning = false;
-  isBreak   = false;
-  secondsLeft = workMinutes * 60;
-  document.getElementById('pomBtn').textContent = t('start');
-  // Отменить нативный будильник
-  cancelAndroidPomodoroAlarm();
   updatePomodoroDisplay();
 }
 
+function reset() {
+  clearInterval(timer); timer = null;
+  isRunning  = false;
+  isBreak    = false;
+  pausedLeft = totalMs(); // ← сразу показываем правильное время
+  endTime    = 0;
+  cancelAndroidPomodoroAlarm();
+  updatePomodoroDisplay();
+}
 function applySettings() {
   const w = parseInt(document.getElementById('pomWork').value);
   const b = parseInt(document.getElementById('pomBreak').value);
@@ -136,16 +156,20 @@ function applySettings() {
 }
 
 export function renderPomodoro() {
+  // Фикс бага 2: рендерим правильный текст кнопки сразу
+  const btnLabel = isRunning ? t('pause') : t('start');
+  const timeDisplay = formatTime(msLeft() || totalMs());
+  
   return `
     <div class="card">
       <div class="card-title">${t('pomodoro')}</div>
-      <div class="pom-phase" id="pomLabel">${t('work')}</div>
-      <div class="pom-time" id="pomTime">${String(workMinutes).padStart(2,'0')}:00</div>
+      <div class="pom-phase" id="pomLabel">${isBreak ? t('rest_label') : t('work')}</div>
+      <div class="pom-time" id="pomTime">${timeDisplay}</div>
       <div class="progress" style="margin:10px 0 14px;">
         <div class="progress-bar" id="pomProgress" style="width:0%;background:linear-gradient(90deg,var(--green2),var(--green));"></div>
       </div>
       <div class="pom-controls">
-        <button class="btn-pom" id="pomBtn" onclick="pomStartStop()">${t('start')}</button>
+        <button class="btn-pom" id="pomBtn" onclick="pomStartStop()">${btnLabel}</button>
         <button class="btn-pom btn-pom--ghost" onclick="pomReset()">${t('reset')}</button>
       </div>
       <div class="pom-settings">

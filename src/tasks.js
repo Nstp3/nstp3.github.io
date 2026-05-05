@@ -33,9 +33,9 @@ function applySkillBonus(category, reverse = false) {
   if (state.skills[category] < 0) state.skills[category] = 0;
 }
 
-export function addTask(text, category) {
+export function addTask(text, category, recurring = false) {
   if (!text || !text.trim()) return false;
-  state.tasks.push({ id: Date.now(), text: text.trim(), done: false, category });
+  state.tasks.push({ id: Date.now(), text: text.trim(), done: false, category, recurring: !!recurring });
   saveState();
   return true;
 }

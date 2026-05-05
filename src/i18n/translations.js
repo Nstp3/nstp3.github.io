@@ -43,6 +43,7 @@ export const translations = {
     games_filter_all: 'Все', games_filter_planned: 'Планирую', games_filter_completed: 'Пройдено',
     status_planned: 'Планирую', status_unwatched: 'Не смотрел', status_favorite: 'Любимые',
     filter_planned: 'Планирую', filter_unwatched: 'Не смотрел', filter_favorite: 'Любимые',
+    recurring: 'Повтор', recurring_off: 'Убрать повтор',
     // Music
     local_player: 'ЛОКАЛЬНЫЙ ПЛЕЕР', load_files: 'Загрузить файлы', load_folder: 'Загрузить папку',
     local_no_track: 'Трек не выбран', local_empty: 'Загрузи MP3-файлы или папку с музыкой',
@@ -103,6 +104,7 @@ export const translations = {
     games_filter_all: 'All', games_filter_planned: 'Planning', games_filter_completed: 'Completed',
     status_planned: 'Planning', status_unwatched: 'Unwatched', status_favorite: 'Favorites',
     filter_planned: 'Planning', filter_unwatched: 'Unwatched', filter_favorite: 'Favorites',
+    recurring: 'Recurring', recurring_off: 'Remove recurring',
     // Music
     local_player: 'LOCAL PLAYER', load_files: 'Load files', load_folder: 'Load folder',
     local_no_track: 'No track selected', local_empty: 'Load MP3 files or a music folder',

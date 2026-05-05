@@ -3,6 +3,25 @@ import { t } from '../i18n/translations.js';
 import { ProgressBar } from '../ui/progressBar.js';
 import { update } from '../renderer.js';
 import { xpForLevel } from '../xp.js';
+import { ICONS } from '../icons.js';
+
+const TROPHY_LEVELS = [
+  { min: 1000, key: 'trophy_legendary' },
+  { min:  500, key: 'trophy_purple'    },
+  { min:  250, key: 'trophy_platinum'  },
+  { min:  100, key: 'trophy_gold'      },
+  { min:   50, key: 'trophy_silver'    },
+  { min:   10, key: 'trophy_bronze'    },
+];
+
+function getGameTrophy() {
+  if (!Array.isArray(state.games)) return null;
+  const completed = state.games.filter(g => g.status === 'completed').length;
+  for (const lvl of TROPHY_LEVELS) {
+    if (completed >= lvl.min) return lvl;
+  }
+  return null;
+}
 
 export function renderProfile() {
   const { name, avatar, level, xp, avatarUrl } = state.profile;
@@ -11,15 +30,32 @@ export function renderProfile() {
     ? `background-image:url('${avatarUrl}'); background-size:cover; background-position:center;`
     : `background:var(--bg4);`;
 
+  // Кубок из блока игр
+  const trophy = getGameTrophy();
+  const trophyHtml = trophy
+    ? (() => {
+        const src = ICONS[trophy.key];
+        return src
+          ? `<img src="${src}" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(0,0,0,0.8));" title="Игровое достижение">`
+          : '';
+      })()
+    : '';
+
   return `
     <div class="card card--profile" style="padding:0; overflow:hidden;">
       <label id="avatarLabel" style="display:block; position:relative; height:200px; cursor:pointer; ${bgStyle}">
         <input type="file" id="avatarInput" accept="image/*" style="display:none;">
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.55) 0%,transparent 50%);"></div>
-        <div style="position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;">
-          <span id="editName" style="font-size:14px;font-weight:600;color:#fff;cursor:pointer;text-shadow:0 1px 4px rgba(0,0,0,0.8);">${name}</span>
-          <span id="editLevel" style="font-family:var(--font-mono);font-size:11px;color:var(--green);background:rgba(0,0,0,0.5);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;cursor:pointer;">LVL ${level}</span>
+
+        <!-- Имя + уровень + кубок в одной строке -->
+        <div style="position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+            <span id="editName" style="font-size:14px;font-weight:600;color:#fff;cursor:pointer;text-shadow:0 1px 4px rgba(0,0,0,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+            ${trophyHtml}
+          </div>
+          <span id="editLevel" style="font-family:var(--font-mono);font-size:11px;color:var(--green);background:rgba(0,0,0,0.5);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;cursor:pointer;flex-shrink:0;">LVL ${level}</span>
         </div>
+
         ${!avatarUrl ? `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.3;">${avatar}</div>` : ''}
         <div style="position:absolute;bottom:8px;right:10px;font-size:10px;color:rgba(255,255,255,0.4);font-family:var(--font-mono);">${t('photo')}</div>
       </label>
