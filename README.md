@@ -25,36 +25,72 @@ A personal RPG-style productivity dashboard. Turn your daily tasks, habits and s
 
 ## ✨ Features
 
-- **Hero profile** — avatar, level and XP / Daily XP tracking
+- **Hero profile** — avatar, level, XP / Daily XP, and game trophy badge
 - **Stats** — Health, Mood, Stamina, Motivation with progress bars
-- **Tasks** — add by category, completing tasks earns XP
+- **Tasks** — add by category, recurring tasks, completing earns XP
 - **Skills** — level up 6 skill tracks with visual progress bars
 - **Radar chart** — spider chart showing your current skill balance
-- **Habits** — monthly day tracker with drag-to-select range and day labels
-- **Pomodoro** — focus timer with configurable work / break duration
-- **Activity** — daily activity line chart
+- **Habits** — calendar-style monthly tracker with drag-to-select and day labels
+- **Pomodoro** — accurate focus timer with configurable work / break duration
+- **Activity** — 14-day activity line chart
 - **3 themes** — Default · Assassin's Creed · Solo Leveling
 - **Export / Import** — JSON backup of all your progress
 - **Bilingual** — RU / EN
 - **Notifications** — pomodoro alerts + daily task & habit reminders (web + Android)
 - **Movies** — personal watchlist with poster, status filters and favorites
-- **Games** — personal game library with cover art, source link, completion tracker and trophy progression
+- **Games** — game library with cover art, source link, completion tracker and trophy progression
+
+---
+
+## 🗂️ Layout
+
+### Desktop
+Two-column layout with all blocks visible at once. Habits can be collapsed/expanded — click any habit row to toggle, or use the **"expand all"** button next to the Habits heading.
+
+### Mobile (bottom navigation)
+| Tab | Contents |
+|---|---|
+| 👤 Hero | Profile · Stats · Radar |
+| ✅ Tasks | Tasks · Activity chart |
+| ⚔️ Skills | Skills · Calendar |
+| 🔥 Habits | Pomodoro · Habits |
+| 🎬 Leisure | Local player · Movies · Games |
+
+---
+
+## ✅ Tasks — Recurring Tasks
+
+You can mark any task as **recurring** — it will be recreated automatically each day.
+
+### How to create a recurring task
+Select **♻️ Recurring** from the category dropdown before adding the task.
+
+### How to manage recurring tasks
+
+| Action | How |
+|---|---|
+| Remove recurring flag | Tap the 🔄 icon on the task |
+| Toggle recurring (mobile) | **Long-press** the task for ~0.6 seconds → phone vibrates → flag toggles |
+
+> Recurring tasks appear every day in your task list. Completing them earns XP as usual.
 
 ---
 
 ## 🎮 Games — Trophy System
 
-Track your gaming progress with a visual trophy progression:
+Track your completed games. Trophies appear in the **Games** block and also next to your hero's name in the profile card.
 
-| Completed | Trophy | Progress |
-|---|---|---|
-| 0–9 | — | `🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ X/10` |
-| 10+ | 🥉 Bronze | `🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ X/50` |
-| 50+ | 🥈 Silver | progress toward 100 |
-| 100+ | 🥇 Gold | progress toward 250 |
-| 250+ | 💎 Platinum | progress toward 500 |
-| 500+ | 💜 Purple | progress toward 1000 |
-| 1000+ | 👑 Legendary | MAX |
+| Completed | Trophy |
+|---|---|
+| 0–9 | — (progress bar toward 10) |
+| 10+ | 🥉 Bronze |
+| 50+ | 🥈 Silver |
+| 100+ | 🥇 Gold |
+| 250+ | 💎 Platinum |
+| 500+ | 💜 Purple |
+| 1000+ | 👑 Legendary |
+
+Each new trophy **replaces** the previous one — both in the Games block and on the profile card.
 
 ---
 
@@ -98,7 +134,7 @@ A native Android WebView wrapper. Works **offline** — all files are bundled in
 
 ### Web (browser)
 - On first load the browser asks for notification permission
-- Tap **"🔔 Tap to enable notifications"** under the Pomodoro block to enable
+- Tap **"🔔 Tap to enable notifications"** under the Pomodoro block
 - **Pomodoro**: alert when work session or break ends — works even on another tab
 - **Daily at 20:00**: reminder about unfinished tasks and unchecked habits (while tab is open)
 
@@ -106,6 +142,20 @@ A native Android WebView wrapper. Works **offline** — all files are bundled in
 - System permission dialog appears on first launch — tap Allow
 - **Pomodoro**: native alarm via `AlarmManager` — fires even when the app is fully closed
 - **Daily at 20:00**: background job via `WorkManager` — fires even when the app is fully closed
+
+---
+
+## ⏱ Pomodoro
+
+The timer uses `Date.now()` internally — it tracks the actual end time rather than counting ticks. This means the display stays accurate even when the browser throttles background timers.
+
+| Control | Action |
+|---|---|
+| Start | Begin work session |
+| Pause | Freeze the remaining time |
+| Resume | Continue from where you paused |
+| Reset | Return to full work duration |
+| Apply | Save new work/break durations and reset |
 
 ---
 
@@ -164,11 +214,6 @@ echo "✓ Done — build APK in Android Studio"
 
 Then in Android Studio: **Build → Generate Signed APK → release → Finish**
 
-### Test on mobile (same Wi-Fi)
-```bash
-npm run dev -- --host
-```
-
 ---
 
 ## 📁 Project Structure
@@ -189,17 +234,21 @@ nstp3-rpg/
     ├── state.js
     ├── db.js
     ├── notifications.js
+    ├── tasks.js
     ├── themes.js
     ├── icons.js
     ├── xp.js
+    ├── logger.js
     ├── components/
-    │   ├── Movies.js
-    │   ├── Games.js
-    │   ├── Pomodoro.js
-    │   ├── Habits.js
+    │   ├── Profile.js
+    │   ├── Stats.js
     │   ├── Tasks.js
     │   ├── Skills.js
-    │   ├── Stats.js
+    │   ├── Habits.js
+    │   ├── Pomodoro.js
+    │   ├── ActivityChart.js
+    │   ├── Movies.js
+    │   ├── Games.js
     │   └── ...
     ├── styles/
     ├── ui/
