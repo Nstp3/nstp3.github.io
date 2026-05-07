@@ -33,7 +33,7 @@ export function showNotification(title, body, options = {}) {
       icon: ICON,
       badge: ICON,
       vibrate: [200, 100, 200],
-      tag: options.tag || 'nstp3-rpg',
+      tag: options.tag || 'razl',
       renotify: options.renotify ?? true,
       ...options,
     });

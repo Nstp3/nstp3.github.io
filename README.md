@@ -1,20 +1,17 @@
-# Nstp3-RPG — Gamified Productivity Dashboard
+# Razl — Plan Fast
 
 <div align="center">
-  <table>
-    <tr>
-      <td align="center"><img src="readme_assets/preview.png" width="100%" alt="Desktop"><br><sub>Desktop</sub></td>
-      <td align="center" width="32%"><img src="readme_assets/preview-mobile.jpg" width="100%" alt="Mobile"><br><sub>Mobile</sub></td>
-    </tr>
-  </table>
 
-  <strong>🇬🇧 English</strong> &nbsp;·&nbsp; <a href="README.ru.md">🇷🇺 Русский</a>
+![preview](readme_assets/preview.png)
 
-  <br>
+<strong>🇬🇧 English</strong> &nbsp;·&nbsp; <a href="README.ru.md">🇷🇺 Русский</a>
 
-  <a href="https://nstp3.github.io/">🌐 Live Demo</a> &nbsp;·&nbsp;
-  <a href="android_version/app-release.apk">⬇️ Android APK</a> &nbsp;·&nbsp;
-  <a href="PRIVACY.md">🔒 Privacy Policy</a>
+<br>
+
+<a href="https://nstp3.github.io/">🌐 Live Demo</a> &nbsp;·&nbsp;
+<a href="android_version/app-release.apk">⬇️ Android APK</a> &nbsp;·&nbsp;
+<a href="PRIVACY.md">🔒 Privacy Policy</a>
+
 </div>
 
 <br>
@@ -25,27 +22,27 @@ A personal RPG-style productivity dashboard. Turn your daily tasks, habits and s
 
 ## ✨ Features
 
-- **Hero profile** — avatar, level, XP / Daily XP, and game trophy badge
+- **Hero profile** — avatar, level, XP / Daily XP, game trophy and movie award badges
 - **Stats** — Health, Mood, Stamina, Motivation with progress bars
 - **Tasks** — add by category, recurring tasks, completing earns XP
 - **Skills** — level up 6 skill tracks with visual progress bars
 - **Radar chart** — spider chart showing your current skill balance
 - **Habits** — calendar-style monthly tracker with drag-to-select and day labels
-- **Pomodoro** — accurate focus timer with configurable work / break duration
+- **Pomodoro** — accurate focus timer, state persists after notifications
 - **Activity** — 14-day activity line chart
 - **3 themes** — Default · Assassin's Creed · Solo Leveling
-- **Export / Import** — JSON backup of all your progress
+- **Export / Import** — JSON backup (`razl-backup.json`)
 - **Bilingual** — RU / EN
 - **Notifications** — pomodoro alerts + daily task & habit reminders (web + Android)
-- **Movies** — personal watchlist with poster, status filters and favorites
-- **Games** — game library with cover art, source link, completion tracker and trophy progression
+- **Movies** — watchlist with poster, status filters, watched tracker and film award progression
+- **Games** — game library with cover, source link, completion tracker and trophy progression
 
 ---
 
 ## 🗂️ Layout
 
 ### Desktop
-Two-column layout with all blocks visible at once. Habits can be collapsed/expanded — click any habit row to toggle, or use the **"expand all"** button next to the Habits heading.
+Two-column layout with all blocks visible at once. Habits can be collapsed — click any habit row to toggle, or use **"expand all"** next to the Habits heading.
 
 ### Mobile (bottom navigation)
 | Tab | Contents |
@@ -60,199 +57,139 @@ Two-column layout with all blocks visible at once. Habits can be collapsed/expan
 
 ## ✅ Tasks — Recurring Tasks
 
-You can mark any task as **recurring** — it will be recreated automatically each day.
+### Create a recurring task
+Select **♻️ Recurring** from the category dropdown before adding.
 
-### How to create a recurring task
-Select **♻️ Recurring** from the category dropdown before adding the task.
-
-### How to manage recurring tasks
-
+### Manage recurring tasks
 | Action | How |
 |---|---|
 | Remove recurring flag | Tap the 🔄 icon on the task |
-| Toggle recurring (mobile) | **Long-press** the task for ~0.6 seconds → phone vibrates → flag toggles |
-
-> Recurring tasks appear every day in your task list. Completing them earns XP as usual.
+| Toggle recurring (mobile) | **Long-press** the task ~0.6s → phone vibrates |
 
 ---
 
 ## 🎮 Games — Trophy System
 
-Track your completed games. Trophies appear in the **Games** block and also next to your hero's name in the profile card.
+| Completed | Trophy | Next goal |
+|---|---|---|
+| 0–9 | — | 10 |
+| 10+ | 🥉 Bronze | 50 |
+| 50+ | 🥈 Silver | 100 |
+| 100+ | 🥇 Gold | 250 |
+| 250+ | 💎 Platinum | 500 |
+| 500+ | 💜 Purple | 1000 |
+| 1000+ | 👑 Legendary | MAX |
 
-| Completed | Trophy |
-|---|---|
-| 0–9 | — (progress bar toward 10) |
-| 10+ | 🥉 Bronze |
-| 50+ | 🥈 Silver |
-| 100+ | 🥇 Gold |
-| 250+ | 💎 Platinum |
-| 500+ | 💜 Purple |
-| 1000+ | 👑 Legendary |
+Trophy appears next to the hero's name on the profile card. Each new trophy replaces the previous one.
 
-Each new trophy **replaces** the previous one — both in the Games block and on the profile card.
+---
+
+## 🎬 Movies — Film Award System
+
+| Watched | Award | Next goal |
+|---|---|---|
+| 0–9 | — | 10 |
+| 10+ | 🥉 Bronze reel | 25 |
+| 25+ | 🥈 Silver reel | 50 |
+| 50+ | 🥇 Gold reel | 100 |
+| 100+ | 🏅 Platinum reel | 250 |
+| 250+ | 💚 Green reel | 500 |
+| 500+ | 🔴 Red reel | 750 |
+| 750+ | 💜 Purple reel | 1000 |
+| 1000+ | 💠 Diamond reel | MAX |
+
+Film award appears next to the hero's name alongside the game trophy.
 
 ---
 
 ## 📱 Android APK
 
-A native Android WebView wrapper. Works **offline** — all files are bundled inside the app.
+Works **offline** — all files are bundled inside the app.
 
 ### Download
-
 [**⬇️ Download app-release.apk**](android_version/app-release.apk)
 
 ### Install
-
 1. Download `app-release.apk`
-2. Open the file on your phone
+2. Open on your phone
 3. If prompted → **Settings → Security → Allow installs from unknown sources**
 4. Tap **Install**
-5. The **Nstp3 RPG** icon will appear on your home screen
 
-> ⚠️ This APK is self-signed and not published on Google Play — that's fine for personal use.
+> ⚠️ Self-signed APK, not on Google Play — fine for personal use.
 
 ---
 
 ## 📱 Add to Home Screen (without APK)
 
 ### Android — Brave / Chrome
-
-1. Open [nstp3.github.io](https://nstp3.github.io/) in **Brave** or **Chrome**
-2. Tap **⋮** → **"Add to Home Screen"** or **"Install app"**
-3. Confirm — icon appears on home screen
+Tap **⋮** → **"Add to Home Screen"** → Confirm
 
 ### iPhone — Safari
-
-1. Open [nstp3.github.io](https://nstp3.github.io/) in **Safari**
-2. Tap **Share** → **"Add to Home Screen"**
-3. Confirm — icon appears on home screen
+Tap **Share** → **"Add to Home Screen"** → Confirm
 
 ---
 
 ## 🔔 Notifications
 
-### Web (browser)
-- On first load the browser asks for notification permission
-- Tap **"🔔 Tap to enable notifications"** under the Pomodoro block
-- **Pomodoro**: alert when work session or break ends — works even on another tab
-- **Daily at 20:00**: reminder about unfinished tasks and unchecked habits (while tab is open)
+### Web
+- Tap **"🔔 Tap to enable notifications"** under Pomodoro
+- **Pomodoro**: alert when session/break ends — works on another tab
+- **Daily at 20:00**: reminders about unfinished tasks and habits
 
 ### Android APK
-- System permission dialog appears on first launch — tap Allow
-- **Pomodoro**: native alarm via `AlarmManager` — fires even when the app is fully closed
-- **Daily at 20:00**: background job via `WorkManager` — fires even when the app is fully closed
+- **Pomodoro**: `AlarmManager` — fires even when app is closed
+- **Daily at 20:00**: `WorkManager` — fires even when app is closed
+- Tapping a notification reopens the app without resetting the timer
 
 ---
 
 ## ⏱ Pomodoro
 
-The timer uses `Date.now()` internally — it tracks the actual end time rather than counting ticks. This means the display stays accurate even when the browser throttles background timers.
-
 | Control | Action |
 |---|---|
 | Start | Begin work session |
-| Pause | Freeze the remaining time |
-| Resume | Continue from where you paused |
-| Reset | Return to full work duration |
-| Apply | Save new work/break durations and reset |
+| Pause | Freeze remaining time |
+| Resume | Continue from where paused |
+| Reset | Return to full duration |
+| Apply | Save new durations and reset |
+
+Timer state is persisted — returning from a notification or background does not reset it.
 
 ---
 
 ## 💾 Data & Privacy
 
-All data is stored **locally on your device** in IndexedDB (~500 MB limit). Nothing is sent to any server. See [Privacy Policy](PRIVACY.md).
+All data stored **locally on your device** in IndexedDB. Nothing sent to servers. See [Privacy Policy](PRIVACY.md).
 
-- **Export** — "Export" button in the top bar → saves `life-rpg-backup.json`
-- **Import** — "Import" button → pick your saved file
-
-> ⚠️ Clearing browser data will erase your progress. Export regularly.
+- **Export** → saves `razl-backup.json`
+- **Import** → restore from backup file
 
 ---
 
 ## 🎨 Themes
 
-Switch via the icon button in the top-right corner.
-
 | | Theme | Style |
 |---|------|-------|
 | <img src="readme_assets/theme-dark.png" width="22" height="22"> | Default | Dark blue — `#2e4369` · `#455bb2` · `#cdd3fd` |
-| <img src="readme_assets/theme-ac.png" width="22" height="22"> | Assassin's Creed | Parchment, warm brown tones |
-| <img src="readme_assets/theme-mythic.png" width="22" height="22"> | Solo Leveling | Dark purple with neon accents |
+| <img src="readme_assets/theme-ac.png" width="22" height="22"> | Assassin's Creed | Parchment, warm brown |
+| <img src="readme_assets/theme-mythic.png" width="22" height="22"> | Solo Leveling | Dark purple, neon accents |
 
 ---
 
 ## 🚀 Local Development
 
-### Requirements
-- [Node.js](https://nodejs.org/) 18+
-
 ```bash
-cd nstp3-rpg
 npm install
 npm run dev        # → http://localhost:5173
+npm run build      # GitHub Pages → dist/
+BUILD_TARGET=android npm run build   # Android → dist-android/
 ```
 
-### Build for GitHub Pages
+### One-command Android rebuild
 ```bash
-npm run build
-```
-
-### Build for Android APK
-```bash
-BUILD_TARGET=android npm run build
-```
-
-### One-command rebuild & copy to Android Studio
-```bash
-cd nstp3-rpg && \
 BUILD_TARGET=android npm run build && \
 rm -r ~/AndroidStudioProjects/Nstp3RPG/app/src/main/assets/* && \
-cp -r dist-android/* ~/AndroidStudioProjects/Nstp3RPG/app/src/main/assets && \
-echo "✓ Done — build APK in Android Studio"
-```
-
-Then in Android Studio: **Build → Generate Signed APK → release → Finish**
-
----
-
-## 📁 Project Structure
-
-```
-nstp3-rpg/
-├── android_version/
-│   └── app-release.apk
-├── readme_assets/
-├── PRIVACY.md
-├── index.html
-├── package.json
-├── vite.config.js
-├── assets/
-└── src/
-    ├── main.js
-    ├── renderer.js
-    ├── state.js
-    ├── db.js
-    ├── notifications.js
-    ├── tasks.js
-    ├── themes.js
-    ├── icons.js
-    ├── xp.js
-    ├── logger.js
-    ├── components/
-    │   ├── Profile.js
-    │   ├── Stats.js
-    │   ├── Tasks.js
-    │   ├── Skills.js
-    │   ├── Habits.js
-    │   ├── Pomodoro.js
-    │   ├── ActivityChart.js
-    │   ├── Movies.js
-    │   ├── Games.js
-    │   └── ...
-    ├── styles/
-    ├── ui/
-    └── i18n/
+cp -r dist-android/* ~/AndroidStudioProjects/Nstp3RPG/app/src/main/assets
 ```
 
 ---
@@ -262,14 +199,13 @@ nstp3-rpg/
 | | |
 |---|---|
 | Bundler | Vite 5 |
-| Language | Vanilla JS (ES Modules), no frameworks |
-| Styles | CSS Custom Properties, 3 themes |
+| Language | Vanilla JS (ES Modules) |
 | Storage | IndexedDB |
 | Charts | Chart.js |
 | Hosting | GitHub Pages |
-| Android | WebView APK (Android Studio / Kotlin), offline |
+| Android | WebView APK (Kotlin), offline |
 | Notifications | Web Notifications API + AlarmManager + WorkManager |
 
 ---
 
-*Level up your real life* ⚔️
+*Plan fast. Level up your real life.* ⚔️

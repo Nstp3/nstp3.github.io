@@ -2,7 +2,7 @@
 // db.js — обёртка над IndexedDB
 // ============================================================
 
-const DB_NAME    = 'nstp3_rpg';
+const DB_NAME    = 'razl_app';
 const DB_VERSION = 1;
 const STORE      = 'state';
 const KEY        = 'main';

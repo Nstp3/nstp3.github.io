@@ -38,7 +38,7 @@ document.getElementById('btnExport')?.addEventListener('click', () => {
   const blob = new Blob([exportJSON()], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'life-rpg-backup.json';
+  a.download = 'razl-backup.json';
   a.click();
 });
 
