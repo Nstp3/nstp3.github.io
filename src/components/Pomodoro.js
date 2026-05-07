@@ -12,11 +12,46 @@ let isBreak      = false;
 let isRunning    = false;
 let workMinutes  = 25;
 let breakMinutes = 5;
+let endTime      = 0;
+let pausedLeft   = 0;
 
-// ── Фикс бага 1: храним не «сколько секунд осталось»,
-//    а «когда должен закончиться таймер» ──────────────────
-let endTime      = 0;   // Date.now() + оставшееся время в мс
-let pausedLeft   = 0;   // сколько мс оставалось в момент паузы
+// ── Сохранение/восстановление состояния помодоро ─────────
+// Нужно чтобы нажатие на Android-уведомление (пересоздаёт Activity)
+// не сбрасывало таймер
+const POM_KEY = 'nstp3_pom_state';
+
+function savePomState() {
+  try {
+    localStorage.setItem(POM_KEY, JSON.stringify({
+      isBreak, isRunning, workMinutes, breakMinutes,
+      endTime, pausedLeft, savedAt: Date.now(),
+    }));
+  } catch(e) {}
+}
+
+function restorePomState() {
+  try {
+    const raw = localStorage.getItem(POM_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (Date.now() - s.savedAt > 2 * 60 * 60 * 1000) return; // старше 2 часов — игнорируем
+    isBreak      = s.isBreak      ?? false;
+    workMinutes  = s.workMinutes  ?? 25;
+    breakMinutes = s.breakMinutes ?? 5;
+    pausedLeft   = s.pausedLeft   ?? 0;
+    if (s.isRunning && s.endTime > Date.now()) {
+      endTime   = s.endTime;
+      isRunning = true;
+      timer     = setInterval(tick, 250);
+    } else if (s.isRunning) {
+      // Время вышло пока страница была закрыта
+      isRunning  = false;
+      pausedLeft = 0;
+    }
+  } catch(e) {}
+}
+
+restorePomState(); // запускаем при загрузке модуля
 
 function totalMs() {
   return (isBreak ? breakMinutes : workMinutes) * 60 * 1000;
@@ -67,6 +102,7 @@ function tick() {
 
     // Автоматически стартуем следующую сессию
     timer = setInterval(tick, 250);
+    savePomState();
     updatePomodoroDisplay();
     return;
   }
@@ -135,6 +171,7 @@ function startStop() {
     const lang = state?.lang || 'ru';
     scheduleAndroidPomodoroAlarm(endTime, isBreak, lang);
   }
+  savePomState();
   updatePomodoroDisplay();
 }
 
@@ -142,11 +179,13 @@ function reset() {
   clearInterval(timer); timer = null;
   isRunning  = false;
   isBreak    = false;
-  pausedLeft = totalMs(); // ← сразу показываем правильное время
+  pausedLeft = totalMs();
   endTime    = 0;
   cancelAndroidPomodoroAlarm();
+  savePomState();
   updatePomodoroDisplay();
 }
+
 function applySettings() {
   const w = parseInt(document.getElementById('pomWork').value);
   const b = parseInt(document.getElementById('pomBreak').value);
@@ -158,8 +197,10 @@ function applySettings() {
 export function renderPomodoro() {
   // Фикс бага 2: рендерим правильный текст кнопки сразу
   const btnLabel = isRunning ? t('pause') : t('start');
-  const timeDisplay = formatTime(msLeft() || totalMs());
-  
+  const timeDisplay = pausedLeft > 0
+    ? formatTime(msLeft())
+    : `${String(workMinutes).padStart(2,'0')}:00`;
+
   return `
     <div class="card">
       <div class="card-title">${t('pomodoro')}</div>

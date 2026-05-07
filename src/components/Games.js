@@ -7,7 +7,7 @@ import { update }           from '../renderer.js';
 import { t }                from '../i18n/translations.js';
 import { ICONS }            from '../icons.js';
 
-let currentFilter = 'all'; // all | planned | completed
+let currentFilter = 'planned'; // default — планирую
 
 // ── Кубки: пороги и иконки ────────────────────────────────
 const TROPHY_LEVELS = [

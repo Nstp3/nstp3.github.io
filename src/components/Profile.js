@@ -14,13 +14,36 @@ const TROPHY_LEVELS = [
   { min:   10, key: 'trophy_bronze'    },
 ];
 
+const FILM_LEVELS = [
+  { min: 1000, key: 'film_diamond'  },
+  { min:  750, key: 'film_purple'   },
+  { min:  500, key: 'film_red'      },
+  { min:  250, key: 'film_green'    },
+  { min:  100, key: 'film_platinum' },
+  { min:   50, key: 'film_gold'     },
+  { min:   25, key: 'film_silver'   },
+  { min:   10, key: 'film_bronze'   },
+];
+
 function getGameTrophy() {
   if (!Array.isArray(state.games)) return null;
   const completed = state.games.filter(g => g.status === 'completed').length;
-  for (const lvl of TROPHY_LEVELS) {
-    if (completed >= lvl.min) return lvl;
-  }
+  for (const lvl of TROPHY_LEVELS) { if (completed >= lvl.min) return lvl; }
   return null;
+}
+
+function getFilmAward() {
+  if (!Array.isArray(state.movies)) return null;
+  const watched = state.movies.filter(m => m.status === 'watched').length;
+  for (const lvl of FILM_LEVELS) { if (watched >= lvl.min) return lvl; }
+  return null;
+}
+
+function badgeImg(key, title) {
+  const src = ICONS[key];
+  return src
+    ? `<img src="${src}" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(0,0,0,0.8));" title="${title}">`
+    : '';
 }
 
 export function renderProfile() {
@@ -30,16 +53,17 @@ export function renderProfile() {
     ? `background-image:url('${avatarUrl}'); background-size:cover; background-position:center;`
     : `background:var(--bg4);`;
 
-  // Кубок из блока игр
   const trophy = getGameTrophy();
-  const trophyHtml = trophy
-    ? (() => {
-        const src = ICONS[trophy.key];
-        return src
-          ? `<img src="${src}" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(0,0,0,0.8));" title="Игровое достижение">`
-          : '';
-      })()
-    : '';
+  const film   = getFilmAward();
+
+  // Собираем значки: сначала то что получено раньше по времени — нет точного timestamps,
+  // поэтому просто: сначала игровой кубок, потом фильмовая награда
+  const badges = [
+    trophy ? badgeImg(trophy.key, 'Игровое достижение') : '',
+    film   ? badgeImg(film.key,   'Кинодостижение')     : '',
+  ].filter(Boolean).join('');
+
+  const trophyHtml = badges;
 
   return `
     <div class="card card--profile" style="padding:0; overflow:hidden;">
