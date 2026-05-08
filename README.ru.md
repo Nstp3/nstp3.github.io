@@ -1,4 +1,4 @@
-Razl — Plan Fast
+# Razl — Plan Fast
 <div align="center">
   <table>
     <tr>
@@ -53,7 +53,11 @@ Razl — Plan Fast
 ПросмотреноНаградаСледующая цель0–9—1010+🥉 Бронзовая катушка2525+🥈 Серебряная катушка5050+🥇 Золотая катушка100100+🏅 Платиновая катушка250250+💚 Зелёная катушка500500+🔴 Красная катушка750750+💜 Фиолетовая катушка10001000+💠 Алмазная катушкаMAX
 Награда фильмов отображается рядом с именем персонажа, рядом с кубком игр.
 
-📱 Android APK
+
+---
+
+# 📱 Android APK
+
 Работает офлайн — все файлы встроены.
 Скачать
 ⬇️ Скачать app-release.apk
@@ -92,17 +96,29 @@ Android APK
 КнопкаДействиеСтартНачать рабочую сессиюПаузаЗаморозить оставшееся времяСтарт (после паузы)ПродолжитьСбросВернуться к полной длительностиПрименитьСохранить настройки и сбросить
 Состояние таймера сохраняется — возврат из уведомления или фона не сбрасывает счётчик.
 
-💾 Данные и конфиденциальность
+
+---
+
+# 💾 Данные и конфиденциальность
+
 Все данные хранятся локально на устройстве в IndexedDB. Ничего не передаётся на серверы. Подробнее: Политика конфиденциальности.
 
 Экспорт → сохранит razl-backup.json
 Импорт → выбери сохранённый файл
 
 
-🎨 Темы оформления
+
+---
+
+# 🎨 Темы оформления
+
 ТемаСтиль<img src="readme_assets/theme-dark.png" width="22" height="22">СтандартнаяТёмно-синяя — #2e4369 · #455bb2 · #cdd3fd<img src="readme_assets/theme-ac.png" width="22" height="22">Assassin's CreedПергамент, тёплые коричневые тона<img src="readme_assets/theme-mythic.png" width="22" height="22">Solo LevelingТёмно-фиолетовая, неоновые акценты
 
-🚀 Локальный запуск
+
+---
+
+# 🚀 Локальный запуск
+
 bashnpm install
 npm run dev        # → http://localhost:5173
 npm run build      # GitHub Pages → dist/
@@ -112,7 +128,11 @@ bashBUILD_TARGET=android npm run build && \
 rm -r ~/AndroidStudioProjects/Nstp3RPG/app/src/main/assets/* && \
 cp -r dist-android/* ~/AndroidStudioProjects/Nstp3RPG/app/src/main/assets
 
-🛠️ Стек
+
+---
+
+# 🛠️ Стек
+
 СборщикVite 5ЯзыкVanilla JS (ES Modules)ДанныеIndexedDBГрафикиChart.jsХостингGitHub PagesAndroidWebView APK (Kotlin), офлайнУведомленияWeb Notifications API + AlarmManager + WorkManager
 
 Plan fast. Прокачивай себя как персонажа. ⚔️
