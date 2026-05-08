@@ -1,4 +1,4 @@
-<h1><img src="readme_assets/logo.png" width="48" height="48" style="vertical-align:middle; margin-top: 4px; margin-right:10px;" alt="logo">Razl — Plan Fast</h1>
+<h1><img src="readme_assets/logo.png" width="48" height="48" style="vertical-align:middle; margin-top: 15px; margin-right:10px;" alt="logo">Razl — Plan Fast</h1>
 
 <div align="center">
   <table>
