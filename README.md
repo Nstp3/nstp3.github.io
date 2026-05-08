@@ -3,7 +3,7 @@ Razl — Plan Fast
   <table>
     <tr>
       <td align="center"><img src="readme_assets/preview.png" width="100%" alt="Desktop"><br><sub>Desktop — все три темы</sub></td>
-      <td align="center" width="30%"><img src="readme_assets/preview-mobile.jpg" width="100%" alt="Mobile"><br><sub>Mobile — Solo Leveling</sub></td>
+      <td align="center" width="30%"><img src="readme_assets/preview-mobile.png" width="100%" alt="Mobile"><br><sub>Mobile — Solo Leveling</sub></td>
     </tr>
   </table>
 <strong>🇬🇧 English</strong>  ·  <a href="README.ru.md">🇷🇺 Русский</a>
